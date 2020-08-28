@@ -1,5 +1,7 @@
 package com.mercadolibre.mutants.service;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -31,11 +33,14 @@ public class MutantService implements IMutantService {
 		
 		if(iValidationHelper.validateInput(dna)) {
 			resultDNAMutant = iValidationHelper.validateMutantDNA(dna);
-			saveDnaAnalysis(resultDNAMutant, dna);
 		}
+		
+		saveDnaAnalysis(resultDNAMutant, dna);
+		
 		return resultDNAMutant;
 	}
 	
+	@Transactional
 	private void saveDnaAnalysis(boolean resultDNAMutant, String[] dna) {
 		DNAAnalysis da = new DNAAnalysis();
 		da.setDna(String.join("", dna).toLowerCase());

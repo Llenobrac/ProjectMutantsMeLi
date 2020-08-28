@@ -1,6 +1,5 @@
 package com.mercadolibre.mutants.helper;
 
-import java.util.Arrays;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,11 +55,26 @@ public class ValidationHelper implements IValidationHelper {
 			String[] dnaBits = strDnaBits.split("(?<=\\G.{"+sizeR+"})");
 			
 			cOcurrences += validateRows(dnaBits);
+				if(cOcurrences > 1) return true;
 			cOcurrences += validateColumns(dnaBits);
-//			validateCross();
-//			validateInvertedCross();
+				if(cOcurrences > 1) return true;
+			cOcurrences += validateCross(dnaBits);
+				if(cOcurrences > 1) return true;
+			cOcurrences += validateInvertedCross(dnaBits);
+				if(cOcurrences > 1) return true;
 		}
-		return false;
+		return cOcurrences > 1;
+	}
+
+	private int validateInvertedCross(String[] dnaBits) {
+		final String[] rDnaBits = utilsForArray.rotateArray(dnaBits);
+		final String[] crDnaBits = utilsForArray.getCrossedRows(rDnaBits);
+		return validateRows(crDnaBits);
+	}
+
+	private int validateCross(String[] dnaBits) {
+		final String[] cDnaBits = utilsForArray.getCrossedRows(dnaBits);
+		return validateRows(cDnaBits);
 	}
 
 	private int validateColumns(final String[] dnaBits) {
