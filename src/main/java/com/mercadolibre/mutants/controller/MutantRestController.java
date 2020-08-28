@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mercadolibre.mutants.model.dto.RequestDNA;
 import com.mercadolibre.mutants.service.IMutantService;
 
 
@@ -21,8 +22,8 @@ public class MutantRestController {
 	private IMutantService iMutantService;
 	
 	@PostMapping("/mutant/")
-	public ResponseEntity mutant(@RequestParam String[] dna) {
-		if(iMutantService.isMutant(dna)) {
+	public ResponseEntity mutant(@RequestBody RequestDNA req) {
+		if(iMutantService.isMutant(req.getDna())) {
 			return new ResponseEntity(HttpStatus.OK);
 		}else {
 			return new ResponseEntity(HttpStatus.FORBIDDEN);

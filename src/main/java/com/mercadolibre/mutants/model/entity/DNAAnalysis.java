@@ -1,4 +1,4 @@
-package com.mercadolibre.mutants.model;
+package com.mercadolibre.mutants.model.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

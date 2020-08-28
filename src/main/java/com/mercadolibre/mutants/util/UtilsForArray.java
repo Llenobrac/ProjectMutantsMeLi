@@ -1,5 +1,7 @@
 package com.mercadolibre.mutants.util;
 
+import java.util.stream.Stream;
+
 import org.springframework.stereotype.Component;
 
 import com.mercadolibre.mutants.constant.LetterEnum;
@@ -12,17 +14,19 @@ public class UtilsForArray {
 		int n = dna.length;
 		String[][] matrix = new String[n][n];
 		for (String rowDNA : dna) {
-			String[] nRow = replaceRow(rowDNA, le);
+			String[] nRow = rowDNA.replaceAll(le.name(), "1").replaceAll("[^1]", "0").split(""); 
 			matrix[i++] = nRow;
 		}
 		return matrix;
 	}
-	
-	private String[] replaceRow(String row, LetterEnum le) {
-		String nRow = row;
-		for (LetterEnum lAux : LetterEnum.values()) {
-			nRow = nRow.replace(lAux.name(), lAux.equals(le) ? "1" : "0" );
+
+	public String[] rotateArray(String[] dnaBits) {
+		final int sizeArray = dnaBits.length;
+		String[] rDnaBits = new String[sizeArray];
+		for (int i = 0; i < sizeArray; i++) {
+			int[] index = new int[]{i};
+			rDnaBits[i] = String.join("", Stream.of(dnaBits).map(dnaR -> dnaR.charAt(index[0])).toArray(String[]::new));
 		}
-		return nRow.split("");
+		return rDnaBits;
 	}
 }

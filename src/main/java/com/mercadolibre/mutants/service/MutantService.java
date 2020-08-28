@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.mercadolibre.mutants.helper.IValidationHelper;
-import com.mercadolibre.mutants.model.DNAAnalysis;
+import com.mercadolibre.mutants.model.entity.DNAAnalysis;
 import com.mercadolibre.mutants.repository.IDNAAnalysRepository;
 
 @Service
