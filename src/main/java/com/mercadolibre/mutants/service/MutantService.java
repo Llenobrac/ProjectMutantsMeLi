@@ -12,6 +12,9 @@ import com.mercadolibre.mutants.model.dto.StatsDto;
 import com.mercadolibre.mutants.model.entity.DNAAnalysis;
 import com.mercadolibre.mutants.repository.IDNAAnalysRepository;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 @Service
 @Scope(value = WebApplicationContext.SCOPE_REQUEST)
 public class MutantService implements IMutantService {
@@ -35,8 +38,11 @@ public class MutantService implements IMutantService {
 		if(iValidationHelper.validateInput(dna)) {
 			resultDNAMutant = iValidationHelper.validateMutantDNA(dna);
 		}
-		
-		saveDnaAnalysis(resultDNAMutant, dna);
+		try {
+			saveDnaAnalysis(resultDNAMutant, dna);
+		} catch (Exception e) {
+			log.error(e.getMessage());
+		}
 		
 		return resultDNAMutant;
 	}
