@@ -8,7 +8,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class UtilsForArray {
 
-	public String[] rotateArray(final String[] dnaBits) {
+	public String[] rotateArray(String[] dnaBits) {
+		String[] columnsToRow = changeColumnsToRow(dnaBits);
+		return Stream.of(columnsToRow).map(ctr -> new StringBuilder(ctr).reverse().toString()).toArray(String[]::new);
+	}
+	
+	public String[] changeColumnsToRow(final String[] dnaBits) {
 		final int sizeArray = dnaBits.length;
 		String[] rDnaBits = new String[sizeArray];
 		for (int i = 0; i < sizeArray; i++) {
@@ -55,4 +60,5 @@ public class UtilsForArray {
 			}
 		}).toArray(String[]::new));
 	}
+
 }

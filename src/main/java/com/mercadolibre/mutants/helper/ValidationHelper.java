@@ -1,5 +1,6 @@
 package com.mercadolibre.mutants.helper;
 
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,7 @@ public class ValidationHelper implements IValidationHelper {
 		int cOcurrences = 0;
 		String strDNA = String.join("", dna);
 		final int sizeR = dna.length;
+		
 		for (LetterEnum le : LetterEnum.values()) {
 			String strDnaBits = strDNA.replaceAll(le.name(), "1").replaceAll("[^1]", "0");
 			String[] dnaBits = strDnaBits.split("(?<=\\G.{"+sizeR+"})");
@@ -78,7 +80,7 @@ public class ValidationHelper implements IValidationHelper {
 	}
 
 	private int validateColumns(final String[] dnaBits) {
-		final String[] rDnaBits = utilsForArray.rotateArray(dnaBits);
+		final String[] rDnaBits = utilsForArray.changeColumnsToRow(dnaBits);
 		return validateRows(rDnaBits);
 	}
 

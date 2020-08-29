@@ -8,11 +8,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.mercadolibre.mutants.helper.IValidationHelper;
+import com.mercadolibre.mutants.model.dto.StatsDto;
 import com.mercadolibre.mutants.model.entity.DNAAnalysis;
 import com.mercadolibre.mutants.repository.IDNAAnalysRepository;
 
 @Service
-//@Scope(value = WebApplicationContext.SCOPE_REQUEST)
+@Scope(value = WebApplicationContext.SCOPE_REQUEST)
 public class MutantService implements IMutantService {
 
 	@Autowired
@@ -43,9 +44,18 @@ public class MutantService implements IMutantService {
 	@Transactional
 	private void saveDnaAnalysis(boolean resultDNAMutant, String[] dna) {
 		DNAAnalysis da = new DNAAnalysis();
-		da.setDna(String.join("", dna).toLowerCase());
+		da.setDna(String.join("", dna).toUpperCase());
 		da.setMutant(resultDNAMutant);
 		iDnaAnalysRepository.save(da);
+	}
+
+	@Override
+	public StatsDto selectStats() {
+		StatsDto statsDto = iDnaAnalysRepository.selectStats();
+		if(statsDto.getCountHumanDNA() > 0L) {
+			statsDto.setRatio(statsDto.getCountMutantDNA()/statsDto.getCountHumanDNA().doubleValue());
+		}
+		return statsDto;
 	}
 
 }

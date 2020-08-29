@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mercadolibre.mutants.model.dto.RequestDNA;
+import com.mercadolibre.mutants.model.dto.StatsDto;
 import com.mercadolibre.mutants.service.IMutantService;
 
 
@@ -32,7 +33,7 @@ public class MutantRestController {
 
 	@GetMapping("/stats")
 	@ResponseBody
-	public String stats() {
-		return "";
+	public StatsDto stats() {
+		return iMutantService.selectStats();
 	}
 }
