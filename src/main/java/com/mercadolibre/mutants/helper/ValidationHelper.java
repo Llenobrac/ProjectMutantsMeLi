@@ -23,8 +23,8 @@ public class ValidationHelper implements IValidationHelper {
 	@Override
 	public boolean validateInput(final String[] dna) {
 		try {
-			validateCharactersAllowed(dna);
 			validateSizeRows(dna);
+			validateCharactersAllowed(dna);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 			return false;
@@ -68,12 +68,12 @@ public class ValidationHelper implements IValidationHelper {
 
 	private int validateInvertedCross(String[] dnaBits) {
 		final String[] rDnaBits = utilsForArray.rotateArray(dnaBits);
-		final String[] crDnaBits = utilsForArray.getCrossedRows(rDnaBits);
+		final String[] crDnaBits = utilsForArray.getDiagonalRows(rDnaBits, BASE_SEQUENCE.length());
 		return validateRows(crDnaBits);
 	}
 
 	private int validateCross(String[] dnaBits) {
-		final String[] cDnaBits = utilsForArray.getCrossedRows(dnaBits);
+		final String[] cDnaBits = utilsForArray.getDiagonalRows(dnaBits, BASE_SEQUENCE.length());
 		return validateRows(cDnaBits);
 	}
 
