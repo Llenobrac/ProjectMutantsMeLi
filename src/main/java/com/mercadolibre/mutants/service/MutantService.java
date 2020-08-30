@@ -21,32 +21,35 @@ public class MutantService implements IMutantService {
 
 	@Autowired
 	private IValidationHelper iValidationHelper;
-	
+
 	@Autowired
 	private IDNAAnalysRepository iDnaAnalysRepository;
-	
+
 	@Override
 	public boolean isMutant(String[] dna) {
 		boolean resultDNAMutant = false;
-		String strDNA = String.join("", dna).toUpperCase();
-		
-		DNAAnalysis dnaAnalysis = iDnaAnalysRepository.findByDNA(strDNA);
-		if(dnaAnalysis != null) {
-			return dnaAnalysis.isMutant();
-		}
-		
-		if(iValidationHelper.validateInput(dna)) {
-			resultDNAMutant = iValidationHelper.validateMutantDNA(dna);
-		}
 		try {
-			saveDnaAnalysis(resultDNAMutant, dna);
+			String strDNA = String.join("", dna).toUpperCase();
+
+			DNAAnalysis dnaAnalysis = iDnaAnalysRepository.findByDNA(strDNA);
+			if (dnaAnalysis != null) {
+				return dnaAnalysis.isMutant();
+			}
+
+			if (iValidationHelper.validateInput(dna)) {
+				resultDNAMutant = iValidationHelper.validateMutantDNA(dna);
+			}
+			try {
+				saveDnaAnalysis(resultDNAMutant, dna);
+			} catch (Exception e) {
+				log.error(e.getMessage());
+			}
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
-		
 		return resultDNAMutant;
 	}
-	
+
 	@Transactional
 	private void saveDnaAnalysis(boolean resultDNAMutant, String[] dna) {
 		DNAAnalysis da = new DNAAnalysis();
@@ -58,8 +61,8 @@ public class MutantService implements IMutantService {
 	@Override
 	public StatsDto selectStats() {
 		StatsDto statsDto = iDnaAnalysRepository.selectStats();
-		if(statsDto.getCountHumanDNA() > 0L) {
-			statsDto.setRatio(statsDto.getCountMutantDNA()/statsDto.getCountHumanDNA().doubleValue());
+		if (statsDto.getCountHumanDNA() > 0L) {
+			statsDto.setRatio(statsDto.getCountMutantDNA() / statsDto.getCountHumanDNA().doubleValue());
 		}
 		return statsDto;
 	}

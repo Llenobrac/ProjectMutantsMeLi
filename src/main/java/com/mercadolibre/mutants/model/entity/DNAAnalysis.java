@@ -9,7 +9,6 @@ import javax.persistence.Table;
 
 import lombok.Data;
 
-@Data
 @Entity
 @Table(name = "dna_analysis")
 public class DNAAnalysis {
@@ -18,10 +17,34 @@ public class DNAAnalysis {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column
 	private Long id;
-	
+
 	@Column(name = "dna")
 	private String dna;
-	
+
 	@Column(name = "mutant")
 	private boolean mutant;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getDna() {
+		return dna;
+	}
+
+	public void setDna(String dna) {
+		this.dna = dna;
+	}
+
+	public boolean isMutant() {
+		return mutant;
+	}
+
+	public void setMutant(boolean mutant) {
+		this.mutant = mutant;
+	}
 }

@@ -18,9 +18,9 @@ public class ValidationHelper implements IValidationHelper {
 
 	@Autowired
 	private UtilsForArray utilsForArray;
-	
+
 	private final String BASE_SEQUENCE = "1111";
-	
+
 	@Override
 	public boolean validateInput(final String[] dna) {
 		try {
@@ -32,40 +32,50 @@ public class ValidationHelper implements IValidationHelper {
 		}
 		return true;
 	}
-	
+
 	private void validateSizeRows(final String[] dna) throws Exception {
-		if(dna.length < 4) throw new Exception("DNA no tiene el tamaño minimo permitido");
-		
+		if (dna.length < 4)
+			throw new Exception("DNA no tiene el tamaño minimo permitido");
+
 		long numBadRows = Stream.of(dna).filter(r -> r.length() != dna.length).count();
-		if(numBadRows > 0L) throw new Exception("DNA no permitido NxM");
+		if (numBadRows > 0L)
+			throw new Exception("DNA no permitido NxM");
 	}
 
 	private void validateCharactersAllowed(final String[] dna) throws Exception {
 		String strValidation = String.join("", dna).toUpperCase();
-		strValidation = strValidation.replaceAll("["+String.join("|", LetterEnum.toStringArray())+"]", "");
-		if(strValidation.length() > 0) throw new Exception("DNA contiene caracteres no permitidos");
+		strValidation = strValidation.replaceAll("[" + String.join("|", LetterEnum.toStringArray()) + "]", "");
+		if (!strValidation.isEmpty())
+			throw new Exception("DNA contiene caracteres no permitidos");
 	}
 
 	@Override
 	public boolean validateMutantDNA(final String[] dna) {
 		int cOcurrences = 0;
-		String strDNA = String.join("", dna);
-		final int sizeR = dna.length;
-		
+
 		for (LetterEnum le : LetterEnum.values()) {
-			String strDnaBits = strDNA.replaceAll(le.name(), "1").replaceAll("[^1]", "0");
-			String[] dnaBits = strDnaBits.split("(?<=\\G.{"+sizeR+"})");
-			
+			String[] dnaBits = replaceCurrentLetterByOne(dna, le);
+
 			cOcurrences += validateRows(dnaBits);
-				if(cOcurrences > 1) return true;
+			if (cOcurrences > 1)
+				return true;
 			cOcurrences += validateColumns(dnaBits);
-				if(cOcurrences > 1) return true;
+			if (cOcurrences > 1)
+				return true;
 			cOcurrences += validateCross(dnaBits);
-				if(cOcurrences > 1) return true;
+			if (cOcurrences > 1)
+				return true;
 			cOcurrences += validateInvertedCross(dnaBits);
-				if(cOcurrences > 1) return true;
+			if (cOcurrences > 1)
+				return true;
 		}
 		return cOcurrences > 1;
+	}
+
+	private String[] replaceCurrentLetterByOne(String[] dna, LetterEnum le) {
+		String strDNA = String.join("", dna);
+		String strDnaBits = strDNA.replaceAll(le.name(), "1").replaceAll("[^1]", "0");
+		return strDnaBits.split("(?<=\\G.{" + dna.length + "})");
 	}
 
 	private int validateInvertedCross(String[] dnaBits) {
@@ -85,6 +95,7 @@ public class ValidationHelper implements IValidationHelper {
 	}
 
 	private int validateRows(final String[] dnaBits) {
-		return Stream.of(dnaBits).map(rDna -> StringUtils.countOccurrencesOf(rDna, BASE_SEQUENCE)).reduce(0, (num1, num2) -> num1 + num2);
+		return Stream.of(dnaBits).map(rDna -> StringUtils.countOccurrencesOf(rDna, BASE_SEQUENCE)).reduce(0,
+				(num1, num2) -> num1 + num2);
 	}
 }
