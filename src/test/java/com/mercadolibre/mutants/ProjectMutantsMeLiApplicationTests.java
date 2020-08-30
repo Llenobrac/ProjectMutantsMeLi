@@ -72,6 +72,13 @@ class ProjectMutantsMeLiApplicationTests {
 	}
 
 	@Test
+	void dnaMutantValidated() {
+		String[] dna = new String[] {"AAAATTTT", "ATGCAATC", "CAGTGCTC", "TTATGTTC", "AGAAGGTC", "CTCCTATC", "TCACTGTC", "AAAATTTC" };
+		boolean result = iMutantService.isMutant(dna);
+		assertTrue(result);
+	}
+	
+	@Test
 	void givenDnaMutantValidated() throws ClientProtocolException, IOException {
 
 		CloseableHttpClient client = HttpClients.createDefault();
