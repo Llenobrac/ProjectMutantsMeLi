@@ -79,7 +79,7 @@ public class ValidationHelper implements IValidationHelper {
 			if (cOcurrences > 1)
 				return true;
 		}
-		return cOcurrences > 1;
+		return false;
 	}
 	
 	/**
