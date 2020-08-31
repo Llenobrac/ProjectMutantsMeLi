@@ -35,22 +35,23 @@ Para que se completen todos los casos en local, debe estar el proyecto arriba.
 
     mvn spring-boot:run
 
-### Validación servicio /mutant/ 
+### Verificación servicio /mutant/ 
 Desde cualquier cliente rest (Postman, Insomnia, ...) 
 
 `[post]: http://localhost:8080/mutant/`
 
 #### body:
     {
-    "dna": [
-    		"GCGCCAT",
-    		"CGCGACT",
-    		"GCGATGT",
-    		"GCATGCT",
-    		"GTTTACT",
-    		"CTCCGGT"]
+    "dna": ["GCGCCAT", "CGCGACT", "GCGATGT", "GCATGCT","GTTTACT","CTCCGGT"]
     }
-En caso de obtener 403, No es Mutante.
-En caso de obtener 200, Es Mutante.
+
+ - Si el status code es 403, No es Mutante.
+ - Si el status code es 200, Es Mutante.
 
 ![Ejemplo desde postman](https://i.imgur.com/N3pX8uJ.png)
+
+### Verificación servicio /stats/ 
+`[get]: http://localhost:8080/stats/`
+Muestra la cantidad de Mutantes y Humanos validados
+
+![Stats](https://i.imgur.com/r5bJk5o.png)
