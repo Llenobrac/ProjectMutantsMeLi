@@ -8,29 +8,19 @@ public class StatsDto {
 	public StatsDto(Long countMutantDNA, Long countHumanDNA) {
 		this.countMutantDNA = countMutantDNA;
 		this.countHumanDNA = countHumanDNA;
+		this.ratio = countHumanDNA > 0 ? countMutantDNA / countHumanDNA.doubleValue() : 0.0;
 	}
 
 	public Long getCountMutantDNA() {
 		return countMutantDNA;
 	}
 
-	public void setCountMutantDNA(Long countMutantDNA) {
-		this.countMutantDNA = countMutantDNA;
-	}
-
 	public Long getCountHumanDNA() {
 		return countHumanDNA;
-	}
-
-	public void setCountHumanDNA(Long countHumanDNA) {
-		this.countHumanDNA = countHumanDNA;
 	}
 
 	public Double getRatio() {
 		return ratio;
 	}
 
-	public void setRatio(Double ratio) {
-		this.ratio = ratio;
-	}
 }

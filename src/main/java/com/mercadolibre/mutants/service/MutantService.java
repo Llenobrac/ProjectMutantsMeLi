@@ -60,11 +60,7 @@ public class MutantService implements IMutantService {
 
 	@Override
 	public StatsDto selectStats() {
-		StatsDto statsDto = iDnaAnalysRepository.selectStats();
-		if (statsDto.getCountHumanDNA() > 0L) {
-			statsDto.setRatio(statsDto.getCountMutantDNA() / statsDto.getCountHumanDNA().doubleValue());
-		}
-		return statsDto;
+		return iDnaAnalysRepository.selectStats();
 	}
 
 }

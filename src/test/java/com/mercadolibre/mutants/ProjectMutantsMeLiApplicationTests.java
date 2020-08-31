@@ -44,7 +44,7 @@ class ProjectMutantsMeLiApplicationTests {
 	}
 
 	@Test
-	void dnaInvalidBySize() {
+	void dnaInvalidByDimensions() {
 		String[] dna = new String[] { "ATGCGAT", "CAGTGCT", "TTATGTT", "AGAAGGT", "CCCCTAT", "TCACTGT" };
 		boolean result = iMutantService.isMutant(dna);
 		assertFalse(result);
@@ -71,6 +71,27 @@ class ProjectMutantsMeLiApplicationTests {
 		assertTrue(result);
 	}
 
+	@Test
+	void dnaMutantByColumns() {
+		String[] dna = new String[] {"ATGC", "ATGC", "ATGC", "ATGC" };
+		boolean result = iMutantService.isMutant(dna);
+		assertTrue(result);
+	}
+	
+	@Test
+	void dnaMutantByInvertedDiagonal() {
+		String[] dna = new String[] {"TTTAC", "TTACT", "TACTT", "TCTTT", "CTTTA"};
+		boolean result = iMutantService.isMutant(dna);
+		assertTrue(result);
+	}
+	
+	@Test
+	void dnaMutantByDiagonal() {
+		String[] dna = new String[] {"TTTAC", "TTACC", "TATTC", "TCTTC", "CTTTC"};
+		boolean result = iMutantService.isMutant(dna);
+		assertTrue(result);
+	}
+	
 	@Test
 	void dnaMutantValidated() {
 		String[] dna = new String[] {"AAAATTTT", "ATGCAATC", "CAGTGCTC", "TTATGTTC", "AGAAGGTC", "CTCCTATC", "TCACTGTC", "AAAATTTC" };

@@ -28,10 +28,6 @@ public class DNAAnalysis {
 		return id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public String getDna() {
 		return dna;
 	}
