@@ -19,7 +19,8 @@ public class ValidationHelper implements IValidationHelper {
 	private UtilsForArray utilsForArray;
 
 	private final String BASE_SEQUENCE = "1111";
-
+	private final int NUM_OCCURRECES = 4;
+	private final int MININUM_SEQUENCE = 2;
 	@Override
 	public boolean validateInput(final String[] dna) {
 		try {
@@ -40,7 +41,7 @@ public class ValidationHelper implements IValidationHelper {
 	 */
 	
 	private void validateSizeRows(final String[] dna) throws Exception {
-		if (dna.length < 4)
+		if (dna.length < NUM_OCCURRECES)
 			throw new Exception("DNA no tiene el tamaño minimo permitido");
 
 		long numBadRows = Stream.of(dna).filter(r -> r.length() != dna.length).count();
@@ -64,50 +65,67 @@ public class ValidationHelper implements IValidationHelper {
 		int cOcurrences = 0;
 
 		for (LetterEnum le : LetterEnum.values()) {
-			String[] dnaBits = replaceCurrentLetterByOne(dna, le);
+			String[] dnaBits = utilsForArray.replaceCurrentLetterByOne(dna, le);
 
 			cOcurrences += validateRows(dnaBits);
-			if (cOcurrences > 1)
+			if (cOcurrences >= MININUM_SEQUENCE)
 				return true;
 			cOcurrences += validateColumns(dnaBits);
-			if (cOcurrences > 1)
+			if (cOcurrences >= MININUM_SEQUENCE)
 				return true;
 			cOcurrences += validateCross(dnaBits);
-			if (cOcurrences > 1)
-				return true;
-			cOcurrences += validateInvertedCross(dnaBits);
-			if (cOcurrences > 1)
+			if (cOcurrences >= MININUM_SEQUENCE)
 				return true;
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Reemplaza la letra actual por 1 y las otras en 0, luego vuelve a armar el Array
-	 * @param dna
-	 * @param le Letra actual recorrida
+	 * Obtiene las diagonales del array
+	 * 1. Asigna la diagonal principal que inicia en la posición (0,0) y termina en la posición (n-1,n-1)
+	 * 2. Crea un nuevo array con la cantidad de diagonales validas 
+	 * 3. Obtiene las diagonales superiores e inferiores en cada recorrido 
+	 * @param dnaBits
+	 * @param lengthDNA
 	 * @return
-	 * 		Array transformado
 	 */
-	private String[] replaceCurrentLetterByOne(String[] dna, LetterEnum le) {
-		String strDNA = String.join("", dna);
-		String strDnaBits = strDNA.replaceAll(le.name(), "1").replaceAll("[^1]", "0");
-		return strDnaBits.split("(?<=\\G.{" + dna.length + "})");
+	public int getDiagonalsRows(final String[] dnaBits) {
+		int limitArray = dnaBits.length - 1;
+		int count = 0;
+		count += countOccurrences(getMainDiagonal(dnaBits, 0, 0, 1, 1));
+		
+		count += countOccurrences(getMainDiagonal(dnaBits, 0, limitArray, 1, -1));
+		int i = 1;
+		int lRows = dnaBits.length - NUM_OCCURRECES;
+		while(count < MININUM_SEQUENCE && i <= lRows) {
+			count += countOccurrences(getMainDiagonal(dnaBits, 0, i, 1, 1));
+			count += countOccurrences(getMainDiagonal(dnaBits, i, 0, 1, 1));
+			
+			count += countOccurrences(getMainDiagonal(dnaBits, 0, limitArray - i, 1, -1));
+			count += countOccurrences(getMainDiagonal(dnaBits, i, limitArray, 1, -1));
+			i++;
+		}
+		return count;
 	}
 
 	/**
-	 * 1. Rota el Array en sentido de las manesillas del reloj
-	 * 2. Obtiene las diagonales después de rotarse
+	 * Obtiene la diagonal principal que inicial desde la posición superior izquierda hasta la posición inferior derecha
 	 * @param dnaBits
 	 * @return
-	 * 		Cantidad de ocurrencias encontradas en diagonal invertida
 	 */
-	private int validateInvertedCross(String[] dnaBits) {
-		final String[] rDnaBits = utilsForArray.rotateArray(dnaBits);
-		final String[] crDnaBits = utilsForArray.getDiagonalRows(rDnaBits, BASE_SEQUENCE.length());
-		return validateRows(crDnaBits);
+	private String getMainDiagonal(final String[] dnaBits, int x, int y, int i, int j) {
+		String diagonal = "";
+		try {
+			do {
+				diagonal += dnaBits[x].charAt(y);
+				x+=i; y+=j;
+			} while (true);
+		} catch (ArrayIndexOutOfBoundsException | StringIndexOutOfBoundsException e) {
+			// TODO: handle exception
+		}
+		return diagonal;
 	}
-
+	
 	/**
 	 * Obtiene las diagonales permitidas en tamaño
 	 * @param dnaBits
@@ -115,8 +133,7 @@ public class ValidationHelper implements IValidationHelper {
 	 * 		Cantidad de ocurrencias encontradas en diagonal principal
 	 */
 	private int validateCross(String[] dnaBits) {
-		final String[] cDnaBits = utilsForArray.getDiagonalRows(dnaBits, BASE_SEQUENCE.length());
-		return validateRows(cDnaBits);
+		return getDiagonalsRows(dnaBits);
 	}
 	/**
 	 * 
@@ -136,7 +153,10 @@ public class ValidationHelper implements IValidationHelper {
 	 * @return
 	 */
 	private int validateRows(final String[] dnaBits) {
-		return Stream.of(dnaBits).map(rDna -> StringUtils.countOccurrencesOf(rDna, BASE_SEQUENCE)).reduce(0,
-				(num1, num2) -> num1 + num2);
+		return Stream.of(dnaBits).map(rDna -> countOccurrences(rDna)).reduce(0, (num1, num2) -> num1 + num2);
 	}
+	
+	private int countOccurrences(String rDna) {
+		return StringUtils.countOccurrencesOf(rDna, BASE_SEQUENCE);
+	} 
 }

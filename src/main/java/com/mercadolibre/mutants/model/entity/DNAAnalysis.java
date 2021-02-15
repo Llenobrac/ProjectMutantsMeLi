@@ -7,8 +7,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import lombok.Data;
-
 @Entity
 @Table(name = "dna_analysis")
 public class DNAAnalysis {
@@ -26,10 +24,6 @@ public class DNAAnalysis {
 
 	public Long getId() {
 		return id;
-	}
-
-	public String getDna() {
-		return dna;
 	}
 
 	public void setDna(String dna) {
