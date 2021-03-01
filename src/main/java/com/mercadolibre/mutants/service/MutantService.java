@@ -2,6 +2,7 @@ package com.mercadolibre.mutants.service;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -30,8 +31,8 @@ public class MutantService implements IMutantService {
 		boolean resultDNAMutant = false;
 		try {
 			String strDNA = String.join("", dna).toUpperCase();
-
-			DNAAnalysis dnaAnalysis = iDnaAnalysRepository.findByDNA(strDNA);
+			String md5StreDNA= DigestUtils.md5Hex(strDNA).toUpperCase();
+			DNAAnalysis dnaAnalysis = iDnaAnalysRepository.findByDNA(md5StreDNA);
 			if (dnaAnalysis != null) {
 				return dnaAnalysis.isMutant();
 			}
@@ -40,7 +41,7 @@ public class MutantService implements IMutantService {
 				resultDNAMutant = iValidationHelper.validateMutantDNA(dna);
 			}
 			try {
-				saveDnaAnalysis(resultDNAMutant, dna);
+				saveDnaAnalysis(resultDNAMutant, md5StreDNA);
 			} catch (Exception e) {
 				log.error(e.getMessage());
 			}
@@ -51,9 +52,9 @@ public class MutantService implements IMutantService {
 	}
 
 	@Transactional
-	private void saveDnaAnalysis(boolean resultDNAMutant, String[] dna) {
+	private void saveDnaAnalysis(boolean resultDNAMutant, String strDNA) {
 		DNAAnalysis da = new DNAAnalysis();
-		da.setDna(String.join("", dna).toUpperCase());
+		da.setDna(strDNA);
 		da.setMutant(resultDNAMutant);
 		iDnaAnalysRepository.save(da);
 	}

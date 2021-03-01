@@ -19,7 +19,7 @@ public class ValidationHelper implements IValidationHelper {
 	private UtilsForArray utilsForArray;
 
 	private final String BASE_SEQUENCE = "1111";
-	private final int NUM_OCCURRECES = 4;
+	private final int NUM_OCCURRENCES = 4;
 	private final int MININUM_SEQUENCE = 2;
 	@Override
 	public boolean validateInput(final String[] dna) {
@@ -41,7 +41,7 @@ public class ValidationHelper implements IValidationHelper {
 	 */
 	
 	private void validateSizeRows(final String[] dna) throws Exception {
-		if (dna.length < NUM_OCCURRECES)
+		if (dna.length < NUM_OCCURRENCES)
 			throw new Exception("DNA no tiene el tamaño minimo permitido");
 
 		long numBadRows = Stream.of(dna).filter(r -> r.length() != dna.length).count();
@@ -63,53 +63,64 @@ public class ValidationHelper implements IValidationHelper {
 	@Override
 	public boolean validateMutantDNA(final String[] dna) {
 		int cOcurrences = 0;
-
 		for (LetterEnum le : LetterEnum.values()) {
 			String[] dnaBits = utilsForArray.replaceCurrentLetterByOne(dna, le);
 
+			if(validatePossibleSequences(dnaBits)) {
+				continue;
+			}
 			cOcurrences += validateRows(dnaBits);
 			if (cOcurrences >= MININUM_SEQUENCE)
 				return true;
 			cOcurrences += validateColumns(dnaBits);
 			if (cOcurrences >= MININUM_SEQUENCE)
 				return true;
-			cOcurrences += validateCross(dnaBits);
+			cOcurrences = validateDiagonals(cOcurrences, dnaBits);
 			if (cOcurrences >= MININUM_SEQUENCE)
+				
 				return true;
 		}
 		return false;
+	}
+	/***
+	 *  Valida 
+	 * @param dnaBits
+	 * @return
+	 */
+	private boolean validatePossibleSequences(String[] dnaBits) {
+		String strBinary = String.join("", dnaBits);
+		return StringUtils.countOccurrencesOf(strBinary, "1") < NUM_OCCURRENCES ;
 	}
 
 	/**
 	 * Obtiene las diagonales del array
 	 * 1. Asigna la diagonal principal que inicia en la posición (0,0) y termina en la posición (n-1,n-1)
-	 * 2. Crea un nuevo array con la cantidad de diagonales validas 
-	 * 3. Obtiene las diagonales superiores e inferiores en cada recorrido 
+	 * 2. Obtiene las diagonales superiores e inferiores en cada recorrido 
+	 * @param cOcurrences 
 	 * @param dnaBits
 	 * @param lengthDNA
 	 * @return
 	 */
-	public int getDiagonalsRows(final String[] dnaBits) {
-		int limitArray = dnaBits.length - 1;
-		int count = 0;
-		count += countOccurrences(getMainDiagonal(dnaBits, 0, 0, 1, 1));
-		
-		count += countOccurrences(getMainDiagonal(dnaBits, 0, limitArray, 1, -1));
+	public int validateDiagonals(int cOcurrences, final String[] dnaBits) {
 		int i = 1;
-		int lRows = dnaBits.length - NUM_OCCURRECES;
-		while(count < MININUM_SEQUENCE && i <= lRows) {
-			count += countOccurrences(getMainDiagonal(dnaBits, 0, i, 1, 1));
-			count += countOccurrences(getMainDiagonal(dnaBits, i, 0, 1, 1));
+		int limitArray = dnaBits.length - 1;
+		int lRows = dnaBits.length - NUM_OCCURRENCES;
+		cOcurrences += countOccurrences(getMainDiagonal(dnaBits, 0, 0, 1, 1));
+		
+		cOcurrences += countOccurrences(getMainDiagonal(dnaBits, 0, limitArray, 1, -1));
+		while(cOcurrences < MININUM_SEQUENCE && i <= lRows) {
+			cOcurrences += countOccurrences(getMainDiagonal(dnaBits, 0, i, 1, 1));
+			cOcurrences += countOccurrences(getMainDiagonal(dnaBits, i, 0, 1, 1));
 			
-			count += countOccurrences(getMainDiagonal(dnaBits, 0, limitArray - i, 1, -1));
-			count += countOccurrences(getMainDiagonal(dnaBits, i, limitArray, 1, -1));
+			cOcurrences += countOccurrences(getMainDiagonal(dnaBits, 0, limitArray - i, 1, -1));
+			cOcurrences += countOccurrences(getMainDiagonal(dnaBits, i, limitArray, 1, -1));
 			i++;
 		}
-		return count;
+		return cOcurrences;
 	}
 
 	/**
-	 * Obtiene la diagonal principal que inicial desde la posición superior izquierda hasta la posición inferior derecha
+	 * Obtiene la diagonal principal que inicia desde la posición superior izquierda hasta la posición inferior derecha
 	 * @param dnaBits
 	 * @return
 	 */
@@ -120,21 +131,10 @@ public class ValidationHelper implements IValidationHelper {
 				diagonal += dnaBits[x].charAt(y);
 				x+=i; y+=j;
 			} while (true);
-		} catch (ArrayIndexOutOfBoundsException | StringIndexOutOfBoundsException e) {
-			// TODO: handle exception
-		}
+		} catch (ArrayIndexOutOfBoundsException | StringIndexOutOfBoundsException e) { }
 		return diagonal;
 	}
 	
-	/**
-	 * Obtiene las diagonales permitidas en tamaño
-	 * @param dnaBits
-	 * @return
-	 * 		Cantidad de ocurrencias encontradas en diagonal principal
-	 */
-	private int validateCross(String[] dnaBits) {
-		return getDiagonalsRows(dnaBits);
-	}
 	/**
 	 * 
 	 * @param dnaBits

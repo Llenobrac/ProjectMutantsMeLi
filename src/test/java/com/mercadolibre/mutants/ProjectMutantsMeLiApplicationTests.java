@@ -1,6 +1,5 @@
 package com.mercadolibre.mutants;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -109,7 +108,7 @@ class ProjectMutantsMeLiApplicationTests {
 //
 //		httpPost.setEntity(new StringEntity("{\"dna\":" + json + "}", ContentType.APPLICATION_JSON));
 //		CloseableHttpResponse response = client.execute(httpPost);
-//		assertEquals(response.getStatusLine().getStatusCode(), HttpStatus.SC_OK);
+//		assertTrue(response.getStatusLine().getStatusCode() == HttpStatus.SC_OK);
 //		client.close();
 //	}
 
