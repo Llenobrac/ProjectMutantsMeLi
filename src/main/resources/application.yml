@@ -1,9 +1,9 @@
 spring:
   main:    lazy-initialization: true
   datasource:
-    url: jdbc:postgresql://localhost:5432/BDDNA
-    username: postgres
-    password: rjex73g1-
+    url: ${DS_URL}
+    username: ${DS_USER}
+    password: ${DS_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
