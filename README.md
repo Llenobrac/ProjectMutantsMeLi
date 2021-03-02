@@ -25,7 +25,7 @@ El reporte del Code Coverage se encuentra en la ruta:
 
 > ./target/site/jacoco/index.html
 
-![CodeCoverage con JaCoCo](https://i.imgur.com/rpxyEaJ.png)
+![CodeCoverage con JaCoCo](https://i.imgur.com/hBbCyiL.png)
 
 > #### Nota
 
