@@ -86,7 +86,7 @@ class ProjectMutantsMeLiApplicationTests {
 	
 	@Test
 	void dnaMutantByDiagonal() {
-		String[] dna = new String[] {"TTTAC", "TTACC", "TATTC", "TCTTC", "CTTTC"};
+		String[] dna = new String[] {"TTTCC", "TACAC", "TCTTG", "CCTTC", "CTTTT"};
 		boolean result = iMutantService.isMutant(dna);
 		assertTrue(result);
 	}

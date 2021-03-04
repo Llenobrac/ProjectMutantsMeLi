@@ -40,11 +40,7 @@ public class MutantService implements IMutantService {
 			if (iValidationHelper.validateInput(dna)) {
 				resultDNAMutant = iValidationHelper.validateMutantDNA(dna);
 			}
-			try {
-				saveDnaAnalysis(resultDNAMutant, md5StreDNA);
-			} catch (Exception e) {
-				log.error(e.getMessage());
-			}
+			saveDnaAnalysis(resultDNAMutant, md5StreDNA);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}

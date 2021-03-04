@@ -66,9 +66,8 @@ public class ValidationHelper implements IValidationHelper {
 		for (LetterEnum le : LetterEnum.values()) {
 			String[] dnaBits = utilsForArray.replaceCurrentLetterByOne(dna, le);
 
-			if(validatePossibleSequences(dnaBits)) {
+			if(validatePossibleSequences(dnaBits)) 
 				continue;
-			}
 			cOcurrences += validateRows(dnaBits);
 			if (cOcurrences >= MININUM_SEQUENCE)
 				return true;
@@ -77,7 +76,6 @@ public class ValidationHelper implements IValidationHelper {
 				return true;
 			cOcurrences = validateDiagonals(cOcurrences, dnaBits);
 			if (cOcurrences >= MININUM_SEQUENCE)
-				
 				return true;
 		}
 		return false;
@@ -94,7 +92,8 @@ public class ValidationHelper implements IValidationHelper {
 
 	/**
 	 * Obtiene las diagonales del array
-	 * 1. Asigna la diagonal principal que inicia en la posición (0,0) y termina en la posición (n-1,n-1)
+	 * 1. Asigna la diagonal principal que inicia en la posición (0,0) y termina en (n-1,n-1) [\] 
+	 * 		y su inversa comenzando desde (0, n-1) y termina en (n-1, 0) [/]
 	 * 2. Obtiene las diagonales superiores e inferiores en cada recorrido 
 	 * @param cOcurrences 
 	 * @param dnaBits
@@ -105,34 +104,38 @@ public class ValidationHelper implements IValidationHelper {
 		int i = 1;
 		int limitArray = dnaBits.length - 1;
 		int lRows = dnaBits.length - NUM_OCCURRENCES;
-		cOcurrences += countOccurrences(getMainDiagonal(dnaBits, 0, 0, 1, 1));
-		
-		cOcurrences += countOccurrences(getMainDiagonal(dnaBits, 0, limitArray, 1, -1));
+		cOcurrences += getMainDiagonal(dnaBits, 0, 0, 0, limitArray);
 		while(cOcurrences < MININUM_SEQUENCE && i <= lRows) {
-			cOcurrences += countOccurrences(getMainDiagonal(dnaBits, 0, i, 1, 1));
-			cOcurrences += countOccurrences(getMainDiagonal(dnaBits, i, 0, 1, 1));
-			
-			cOcurrences += countOccurrences(getMainDiagonal(dnaBits, 0, limitArray - i, 1, -1));
-			cOcurrences += countOccurrences(getMainDiagonal(dnaBits, i, limitArray, 1, -1));
+			cOcurrences += getMainDiagonal(dnaBits, 0, i, 0, limitArray - i);
+			if(cOcurrences >= MININUM_SEQUENCE) 
+				return cOcurrences;
+			cOcurrences += getMainDiagonal(dnaBits, i, 0, i, limitArray);
 			i++;
 		}
 		return cOcurrences;
 	}
 
 	/**
-	 * Obtiene la diagonal principal que inicia desde la posición superior izquierda hasta la posición inferior derecha
+	 * Recorre las diagonales y su inversa de espejo
 	 * @param dnaBits
-	 * @return
+	 * @param x index de fila
+	 * @param y index de columna
+	 * @param xI index de fila espejo
+	 * @param yI index de fila espejo
+	 * @return la cantidad de ocurrencias de ambas diagonales
+	 * @exception Se desborda al superar el limite del array
 	 */
-	private String getMainDiagonal(final String[] dnaBits, int x, int y, int i, int j) {
+	private int getMainDiagonal(final String[] dnaBits, int x, int y, int xI, int yI) {
 		String diagonal = "";
+		String diagonalI = "";
 		try {
 			do {
-				diagonal += dnaBits[x].charAt(y);
-				x+=i; y+=j;
+				diagonal += dnaBits[x++].charAt(y);
+				diagonalI += dnaBits[xI++].charAt(yI);
+				y+=1; yI+=-1;
 			} while (true);
 		} catch (ArrayIndexOutOfBoundsException | StringIndexOutOfBoundsException e) { }
-		return diagonal;
+		return countOccurrences(diagonal) + countOccurrences(diagonalI);
 	}
 	
 	/**
